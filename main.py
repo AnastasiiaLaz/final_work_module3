@@ -1,16 +1,22 @@
-# This is a sample Python script.
+from arrs import functions
+import json
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+from path import PATH_TO_JSON
 
 
-# Press the green button in the gutter to run the script.
+def main():
+    operations = functions.get_data(PATH_TO_JSON)
+    ex_operations = functions.get_executed_operations(operations)
+    five_operations = functions.get_recent_five_operations(ex_operations)
+    print(json.dumps(five_operations, indent=2, ensure_ascii=False))
+    for operation in five_operations:
+        if operation:
+            print(functions.validate_operation(operation))
+
+
+print(main())
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    main()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
