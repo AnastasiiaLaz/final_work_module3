@@ -1,12 +1,9 @@
 import datetime
-from datetime import datetime
 import json
-
-from path import PATH_TO_JSON
 
 
 def get_data(path: str) -> list[dict]:
-    with open(path, 'r') as file:
+    with open(path, 'r', encoding='utf-8') as file:
         return json.load(file)
 
 
@@ -34,19 +31,17 @@ def convert_time(date: str) -> str:
 
 def convert_payment_dir(direction: str) -> str:
     if direction.startswith('Счет'):
-        return f'{direction[5:9]} {direction[9:11]}** ***{direction[-4:]}'
-    card_dir = direction.split(' ')[2]
-    return f'{card_dir[:4]} {card_dir[4:6]}** ***{card_dir[-4:]}'
+        return f'Счет {direction[5:9]} {direction[9:11]}** ***{direction[-4:]}'
+    card_dir = direction.split(' ')[-1]
+    name_of_card = direction.split(" ")[:-1]
+    return f'{" ".join(name_of_card)} {card_dir[:4]} {card_dir[4:6]}** ***{card_dir[-4:]}'
 
 
 def validate_operation(operation: dict) -> str:
     date = convert_time(operation['date'])
-    from_ = convert_payment_dir(operation['from']) if operation.get('from') else ''
-    to_ = convert_payment_dir(operation['to'])
+    from_ = convert_payment_dir(operation['from']) if operation.get('from') else 'неизвестный'
+    to_ = f"**{operation['to'].split(' ')[-1][-4:]}"
 
-    return f"{date} {operation['description']}" \
-           f"{from_} -> {to_}" \
-           f"{operation['operationAmount']['amount']} {operation['operationAmount']['currency']['name']}"
-
-
-
+    return f"{date} {operation['description']}\n{from_} -> " \
+           f"{to_}\n{operation['operationAmount']['amount']} " \
+           f"{operation['operationAmount']['currency']['name']}\n"
